@@ -13,11 +13,13 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    public SecurityConfig(CsrfCookieFilter csrfCookieFilte) {
-        this.csrfCookieFilter = csrfCookieFilte;
+    public SecurityConfig(CsrfCookieFilter csrfCookieFilter, MyLoginSuccessHandler loginSuccessHandler) {
+        this.csrfCookieFilter = csrfCookieFilter;
+        this.loginSuccessHandler = loginSuccessHandler;
     }
 
     private final CsrfCookieFilter csrfCookieFilter;
+    private final MyLoginSuccessHandler loginSuccessHandler;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -29,6 +31,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                 .formLogin(login -> login
                         .defaultSuccessUrl("/", true)
+                        .successHandler(loginSuccessHandler)
                 )
                 .csrf(csrf -> csrf
                         .csrfTokenRepository(new CookieCsrfTokenRepository())
