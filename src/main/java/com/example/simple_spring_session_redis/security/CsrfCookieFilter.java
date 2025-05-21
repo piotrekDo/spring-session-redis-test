@@ -1,4 +1,4 @@
-package com.example.simple_spring_session_redis;
+package com.example.simple_spring_session_redis.security;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

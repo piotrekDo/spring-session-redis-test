@@ -1,4 +1,4 @@
-package com.example.simple_spring_session_redis;
+package com.example.simple_spring_session_redis.home;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
