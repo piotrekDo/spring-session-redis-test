@@ -1,5 +1,10 @@
 package com.example.simple_spring_session_redis.security;
 
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,9 +22,14 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.context.SecurityContextHolderFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfFilter;
+import org.springframework.security.web.csrf.CsrfToken;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.filter.OncePerRequestFilter;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +40,7 @@ public class SecurityConfig {
 
     private final CsrfCookieFilter csrfCookieFilter;
     private final LoginSuccessHandler loginSuccessHandler;
+    private final CustomCsrfDebugFilter customCsrfDebugFilter;
 
     private final static String ROLE_ADMIN = "ROLE_ADMIN";
     private final static String ROLE_USER = "USER";
@@ -47,10 +58,14 @@ public class SecurityConfig {
                     };
                     c.configurationSource(cs);
                 })
+//                .csrf(csrf -> csrf
+//                        .csrfTokenRepository(new CookieCsrfTokenRepository()))
                 .csrf(csrf -> csrf
-                        .csrfTokenRepository(new CookieCsrfTokenRepository()))
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                        .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())) // wyłącza XOR
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                 .addFilterBefore(csrfCookieFilter, SecurityContextHolderFilter.class)
+//                .addFilterBefore(customCsrfDebugFilter, CsrfFilter.class)
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
                 .oauth2Login(oauth2 -> oauth2
                         .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService()))
@@ -96,4 +111,5 @@ public class SecurityConfig {
             );
         };
     }
+
 }
