@@ -4,6 +4,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
@@ -13,9 +14,10 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @Component
+@RequiredArgsConstructor
 public class CsrfCookieFilter extends OncePerRequestFilter {
 
-    private final CsrfTokenRepository csrfTokenRepository = new CookieCsrfTokenRepository();
+    private final CsrfTokenRepository csrfTokenRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,

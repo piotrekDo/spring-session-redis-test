@@ -1,6 +1,7 @@
 package com.example.simple_spring_session_redis.security;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -9,9 +10,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
+import org.springframework.security.web.csrf.CsrfToken;
+import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Optional;
 
 @Component
@@ -19,6 +23,8 @@ import java.util.Optional;
 @Slf4j
 public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
     private final GoogleOauth2LoginService loginService;
+    private final CsrfTokenRepository csrfTokenRepository;
+
 
     @Value("${client.baseUrl}")
     private String clientBaseUrl;
@@ -35,13 +41,18 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,
                                         Authentication authentication) throws IOException {
+
         Optional<GooglePrincipal> principalData = loginService.extractGooglePrincipalData(authentication);
         if (principalData.isEmpty()) {
             getRedirectStrategy().sendRedirect(request, response, FAILURE_REDIRECTION);
             log.warn("Unsuccessful google principal extraction");
             return;
         }
-
+        CsrfToken token = csrfTokenRepository.loadToken(request);
+        if (token == null) {
+            token = csrfTokenRepository.generateToken(request);
+        }
+        csrfTokenRepository.saveToken(token, request, response);
         GooglePrincipal googlePrincipal = principalData.get();
         HttpSession session = request.getSession();
         session.setAttribute("user", googlePrincipal.getEmail());

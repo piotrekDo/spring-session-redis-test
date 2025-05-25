@@ -29,10 +29,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+    private final CookieCsrfTokenRepository cookieCsrfTokenRepository;
     private final CsrfCookieFilter csrfCookieFilter;
     private final LoginSuccessHandler loginSuccessHandler;
-    private final CustomCsrfDebugFilter customCsrfDebugFilter;
-
     private final static String ROLE_ADMIN = "ROLE_ADMIN";
     private final static String ROLE_USER = "USER";
 
@@ -49,14 +48,11 @@ public class SecurityConfig {
                     };
                     c.configurationSource(cs);
                 })
-//                .csrf(csrf -> csrf
-//                        .csrfTokenRepository(new CookieCsrfTokenRepository()))
                 .csrf(csrf -> csrf
-                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                        .csrfTokenRepository(cookieCsrfTokenRepository)
                         .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())) // wyłącza XOR
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                 .addFilterBefore(csrfCookieFilter, SecurityContextHolderFilter.class)
-//                .addFilterBefore(customCsrfDebugFilter, CsrfFilter.class)
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
                 .oauth2Login(oauth2 -> oauth2
                         .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService()))
