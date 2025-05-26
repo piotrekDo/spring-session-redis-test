@@ -41,9 +41,10 @@ public class SecurityConfig {
                 .cors(c -> {
                     CorsConfigurationSource cs = request -> {
                         CorsConfiguration cc = new CorsConfiguration();
+                        cc.setAllowCredentials(true);
                         cc.setAllowedOrigins(List.of("http://localhost:5173", "http://localhost:5174"));
-                        cc.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
-                        cc.setAllowedHeaders(List.of("Origin", "Content-Type", "X-Auth-Token", "Access-Control-Expose-Header"));
+                        cc.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                        cc.setAllowedHeaders(List.of("Origin", "Content-Type", "X-Auth-Token", "Authorization", "X-XSRF-TOKEN"));
                         return cc;
                     };
                     c.configurationSource(cs);
@@ -51,7 +52,10 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf
                         .csrfTokenRepository(cookieCsrfTokenRepository)
                         .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())) // wyłącza XOR
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                        .maximumSessions(1)
+                        .maxSessionsPreventsLogin(false))
                 .addFilterBefore(csrfCookieFilter, SecurityContextHolderFilter.class)
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
                 .oauth2Login(oauth2 -> oauth2
@@ -60,7 +64,6 @@ public class SecurityConfig {
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        .logoutSuccessUrl("https://www.google.com")
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID", "SESSION"))
                 .authorizeHttpRequests(auth -> auth
