@@ -15,6 +15,7 @@ public class RedisSessionService {
 
     private final RedisTemplate<String, Object> redisTemplate;
 
+
     public Map<String, Map<Object, Object>> getAllSessions() {
         Set<String> keys = redisTemplate.keys("spring:session:sessions:*");
         if (keys == null || keys.isEmpty()) {

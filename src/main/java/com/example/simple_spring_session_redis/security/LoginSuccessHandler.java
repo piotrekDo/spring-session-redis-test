@@ -1,22 +1,23 @@
 package com.example.simple_spring_session_redis.security;
 
 import jakarta.annotation.PostConstruct;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Optional;
+import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
@@ -53,10 +54,23 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
             token = csrfTokenRepository.generateToken(request);
         }
         csrfTokenRepository.saveToken(token, request, response);
-        GooglePrincipal googlePrincipal = principalData.get();
+
         HttpSession session = request.getSession();
+        GooglePrincipal googlePrincipal = principalData.get();
         session.setAttribute("user", googlePrincipal.getEmail());
+        CustomPrincipal customPrincipal = new CustomPrincipal(
+                googlePrincipal.getEmail(),
+                session.getId(),
+                Set.of("USER")
+        );
+        Authentication customAuth = new UsernamePasswordAuthenticationToken(
+                customPrincipal,
+                authentication.getCredentials(),
+                authentication.getAuthorities()
+        );
+
         loginService.appendUserCookie(response, googlePrincipal);
+        SecurityContextHolder.getContext().setAuthentication(customAuth);
         getRedirectStrategy().sendRedirect(request, response, AUTHENTICATED_REDIRECTION);
     }
 }
