@@ -20,7 +20,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.context.SecurityContextHolderFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
-import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisIndexedHttpSession;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -56,6 +55,7 @@ public class SecurityConfig {
                     c.configurationSource(cs);
                 })
                 .csrf(csrf -> csrf
+                        .ignoringRequestMatchers("/health/**")
                         .csrfTokenRepository(cookieCsrfTokenRepository)
                         .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())) // wyłącza XOR
                 .sessionManagement(session -> session
@@ -76,6 +76,7 @@ public class SecurityConfig {
                         .requestMatchers("/bye").permitAll()
                         .requestMatchers("/role/admin").hasAuthority(ROLE_ADMIN)
                         .requestMatchers("/role/user").hasAnyAuthority(ROLE_USER, ROLE_ADMIN)
+                        .requestMatchers("/health/**").permitAll()
                         .anyRequest().authenticated()
                 )
 

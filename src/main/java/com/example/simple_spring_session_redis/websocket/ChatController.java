@@ -10,7 +10,7 @@ public class ChatController {
   @MessageMapping("/chat.sendMessage")
   @SendTo("/topic/public")
   public ChatMessage sendMessage(ChatMessage message) {
-    // Tu można wzbogacić logikę, np. ustawienia daty, użytkownika itp.
+    System.out.println(message);
     return message;
   }
 }
