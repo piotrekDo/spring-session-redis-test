@@ -11,16 +11,16 @@ public class SessionEventListener {
 
     @EventListener
     public void handleSessionCreated(SessionCreatedEvent event) {
-        System.out.println("Session created: " + event.getSessionId());
+//        System.out.println("Session created: " + event.getSessionId());
     }
 
     @EventListener
     public void handleSessionDestroyed(SessionDeletedEvent event) {
-        System.out.println("Session deleted: " + event.getSessionId());
+//        System.out.println("Session deleted: " + event.getSessionId());
     }
 
     @EventListener
     public void handleSessionExpired(SessionExpiredEvent event) {
-        System.out.println("Session expired: " + event.getSessionId());
+//        System.out.println("Session expired: " + event.getSessionId());
     }
 }

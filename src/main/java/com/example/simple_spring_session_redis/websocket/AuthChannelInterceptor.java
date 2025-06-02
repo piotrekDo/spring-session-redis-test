@@ -12,15 +12,25 @@ public class AuthChannelInterceptor implements ChannelInterceptor {
 
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
-        StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
-        CustomPrincipal user = (CustomPrincipal) accessor.getUser();
-
-        System.out.println(user.getName());
-        System.out.println(user.getSessionId());
-        System.out.println(user.getAuthorities());
-
-        if (StompCommand.CONNECT.equals(accessor.getCommand())) {
-            }
+//        StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
+//        StompCommand command = accessor.getCommand();
+//        CustomPrincipal user = (CustomPrincipal) accessor.getUser();
+//
+//        if (StompCommand.CONNECT.equals(command)) {
+//            System.out.println("CONNECT: " + accessor.getDestination());
+//        } else if (StompCommand.SUBSCRIBE.equals(command)) {
+//            System.out.println("SUBSCRIBE: " + accessor.getDestination());
+//        } else if (StompCommand.MESSAGE.equals(command)) {
+//            System.out.println("MESSAGE: " + accessor.getDestination());
+//        } else if (StompCommand.UNSUBSCRIBE.equals(command)) {
+//            System.out.println("UNSUBSCRIBE: " + accessor.getDestination());
+//            System.out.println("UNSUBSCRIBE: " + accessor.getDestination());
+//            System.out.println("UNSUBSCRIBE: " + accessor.getDestination());
+//        } else if (StompCommand.DISCONNECT.equals(command)) {
+//            System.out.println("UNSUBSCRIBE: " + accessor.getDestination());
+//            System.out.println("UNSUBSCRIBE: " + accessor.getDestination());
+//            System.out.println("UNSUBSCRIBE: " + accessor.getDestination());
+//        }
         return message;
     }
 }

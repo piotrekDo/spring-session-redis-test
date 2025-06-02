@@ -60,6 +60,7 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
         session.setAttribute("user", googlePrincipal.getEmail());
         CustomPrincipal customPrincipal = new CustomPrincipal(
                 googlePrincipal.getEmail(),
+                googlePrincipal.getFirstName() + " " + googlePrincipal.getLastName(),
                 session.getId(),
                 Set.of("USER")
         );

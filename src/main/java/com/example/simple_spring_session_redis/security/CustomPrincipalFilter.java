@@ -30,7 +30,6 @@ public class CustomPrincipalFilter extends OncePerRequestFilter {
         HttpSession httpSession = request.getSession(false);
         if (httpSession != null) {
             String sessionId = httpSession.getId();
-            System.out.println(sessionId);
             Session session = sessionRepository.findById(sessionId);
             if (session != null) {
                 SecurityContext securityContext = session.getAttribute("SPRING_SECURITY_CONTEXT");
