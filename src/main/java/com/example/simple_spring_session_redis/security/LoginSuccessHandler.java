@@ -62,6 +62,7 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
                 googlePrincipal.getEmail(),
                 googlePrincipal.getFirstName() + " " + googlePrincipal.getLastName(),
                 session.getId(),
+                googlePrincipal.getPictureUrl(),
                 Set.of("USER")
         );
         Authentication customAuth = new UsernamePasswordAuthenticationToken(

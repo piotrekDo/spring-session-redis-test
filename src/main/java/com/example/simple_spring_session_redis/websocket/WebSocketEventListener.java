@@ -1,6 +1,8 @@
 package com.example.simple_spring_session_redis.websocket;
 
 import com.example.simple_spring_session_redis.security.CustomPrincipal;
+import com.example.simple_spring_session_redis.websocket.chat.ChatSystemMessage;
+import com.example.simple_spring_session_redis.websocket.chat.MessageType;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +35,7 @@ public class WebSocketEventListener {
         logger.info("User " + name + " subscribed to: {}", destination);
 
         sessionManager.addUserToChannel(principal, destination);
-        messagingTemplate.convertAndSend(destination, new ChatMessage(displayName, name, ChatMessage.MessageType.JOIN));
+        messagingTemplate.convertAndSend(destination, new ChatSystemMessage(name, displayName, principal.getImageUrl(), MessageType.JOIN));
     }
 
     @EventListener
@@ -46,7 +48,7 @@ public class WebSocketEventListener {
 
         sessionManager.removeUserFromChannel(principal, destination);
         logger.info("Client unsubscribed. Session: " + name + ", Subscription: " + destination);
-        messagingTemplate.convertAndSend(destination, new ChatMessage(displayName, name, ChatMessage.MessageType.LEAVE));
+        messagingTemplate.convertAndSend(destination, new ChatSystemMessage(name, displayName, principal.getImageUrl(), MessageType.LEAVE));
 
     }
 
@@ -58,7 +60,7 @@ public class WebSocketEventListener {
         String displayName = eventInfo.getDisplayName();
 
         Set<String> userChannels = sessionManager.removeUserFromAllChannels(principal);
-        userChannels.forEach(channelName -> messagingTemplate.convertAndSend(channelName, new ChatMessage(displayName, name, ChatMessage.MessageType.LEAVE)));
+        userChannels.forEach(channelName -> messagingTemplate.convertAndSend(channelName, new ChatSystemMessage(name, displayName, principal.getImageUrl(), MessageType.OFFLINE)));
         logger.info("Session disconnected: {}", name);
     }
 }

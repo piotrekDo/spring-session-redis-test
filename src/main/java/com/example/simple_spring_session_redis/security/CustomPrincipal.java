@@ -13,6 +13,7 @@ public class CustomPrincipal implements Principal, Serializable {
     private final String name;
     private final String displayName;
     private final String sessionId;
+    private final String imageUrl;
     private final Set<String> authorities;
 
 }

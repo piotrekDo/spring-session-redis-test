@@ -1,12 +1,13 @@
 package com.example.simple_spring_session_redis.websocket;
 
 import com.example.simple_spring_session_redis.security.CustomPrincipal;
+import com.example.simple_spring_session_redis.websocket.chat.ChatUser;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.example.simple_spring_session_redis.websocket.ChatUser.fromPrincipal;
+import static com.example.simple_spring_session_redis.websocket.chat.ChatUser.fromPrincipal;
 
 @Component
 public class WebsocketSessionManager {

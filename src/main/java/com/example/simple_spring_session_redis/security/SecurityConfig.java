@@ -76,8 +76,7 @@ public class SecurityConfig {
                         .requestMatchers("/bye").permitAll()
                         .requestMatchers("/role/admin").hasAuthority(ROLE_ADMIN)
                         .requestMatchers("/role/user").hasAnyAuthority(ROLE_USER, ROLE_ADMIN)
-                        .requestMatchers("/health/**").permitAll()
-                        .anyRequest().permitAll()
+                        .anyRequest().authenticated()
                 )
 
         ;
