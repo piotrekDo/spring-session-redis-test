@@ -47,7 +47,7 @@ Netty pełni rolę tego niskopoziomowego, asynchronicznego łącza (connectora),
 
 1. Uruchom RabbitMQ w Dockerze
    W terminalu (tam, gdzie masz działającego Dockera) wpisz:
-   docker run -d --hostname rabbit --name rabbitmq -p 15672:15672 -p 61613:61613 rabbitmq:3-management
+   docker run -d --hostname my-rabbit --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management
    -d — uruchamia w tle
    --hostname rabbit — nazwa hosta w kontenerze
    --name rabbitmq — nazwa kontenera
@@ -102,3 +102,12 @@ Podsumowanie poleceń:
 docker run -d --hostname rabbit --name rabbitmq -p 15672:15672 -p 61613:61613 rabbitmq:3-management
 # Sprawdź działanie panelu zarządzania: http://localhost:15672 (guest/guest)
 
+## PRZY KOLEJNYCH URUCHOMNIENIACH wystarczy polecenie 
+docker start rabbitmq
+
+# odblokowanie portow potrebnych dla AMQP
+docker run -d --hostname my-rabbit --name rabbitmq \
+-p 5672:5672 \
+-p 15672:15672 \
+-p 61613:61613 \
+rabbitmq:3-management
